@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>{{ title }}</title>
+</head>
+<body>
+<h1>{{ title }}</h1>
+<br/>
+<a href="http://localhost:8080/">Home</a>
+<table border="solid">
+    <tr>
+        <td>Plant ID</td>
+        <td>Moisture Level</td>
+        <td>Recorded Datatime</td>
+    </tr>
+{% for t in PlantData %}
+    <tr>
+        <td>{{ t.0 }}</td>
+        <td>{{ t.1 }}</td>
+        <td>{{ t.2 }}</td>
+    </tr>
+{% endfor %}
+</table>
+</body>
+</html>
