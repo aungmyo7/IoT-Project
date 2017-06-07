@@ -9,4 +9,6 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'SmartAgriWeb.views.home'),
     url(r'^dashboard$', 'SmartAgriWeb.views.dashboard'),
+    url(r'^pumpon$', 'SmartAgriWeb.views.pumpswitchOn'),
+    url(r'^pumpoff$', 'SmartAgriWeb.views.pumpswitchOff'),
 )
