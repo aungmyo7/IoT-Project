@@ -7,9 +7,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', 'SmartAgriWeb.views.home'),
-    url(r'^dashboard$', 'SmartAgriWeb.views.dashboard'),
-    url(r'^pumpon$', 'SmartAgriWeb.views.pumpswitchOn'),
+    url(r'^$', 'SmartAgriWeb.views.dashboard'),
+    url(r'^pumpswitchOn$', 'SmartAgriWeb.views.pumpswitchOn'),
     url(r'^pumpoff$', 'SmartAgriWeb.views.pumpswitchOff'),
     url(r'^latestSensorData$','SmartAgriWeb.views.latestSensorData'),
 )

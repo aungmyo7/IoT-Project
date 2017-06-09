@@ -27,13 +27,13 @@ def home(request):
 def dashboard(request):
     connection = None
     data = dict()
-    data['title'] = "Plants Irrigation Info"
+    data['title'] = "Smart Agriculture"
     data['static']=settings.STATIC_URL
     try:
-        connection = sqlite3.connect('/home/pi/SmartAgri/mydatabase.db')
+        connection = sqlite3.connect('/home/pi/django/SmartAgri/mydatabase.db')
         with connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT Id,MoistureLevel,RecordedDate FROM PlantData")
+            cursor.execute("SELECT Id,MoistureLevel,PumpStatus,RecordedDate FROM PlantData")
             data['PlantData'] = cursor.fetchall()
     except sqlite3.Error, e:
         print "Error %s:" % e.args[0]
@@ -45,45 +45,74 @@ def dashboard(request):
     return HttpResponse(html)
 
 def pumpswitchOn(request):
-	lcd = Lcd()
-	lcd.clear()
-	lcd.display_string("pump on",1)
-	relay = Relay()
-	relay.switch(3,1)
+	#lcd = Lcd()
+	#lcd.clear()
+	#lcd.display_string("pump on",1)
+	#relay = Relay()
+	#relay.switch(3,1)
+        lcd = Lcd()
+        lcd.clear()
+        pumpStatus = "ON"
+        lcd.display_string("Water Pump %s" % pumpStatus,1)
+        moistureLevel = getLatestMoistureLevel()
+        savedata(1, moistureLevel, pumpStatus)
+        
 	response_mesage={
 		"result":"pump is on"
 	}
 	return JsonResponse(response_mesage)
 
 def pumpswitchOff(request):
-	lcd = Lcd()
-	lcd.clear()
-	lcd.display_string("pump off",1)
+	#lcd = Lcd()
+	#lcd.clear()
+	#lcd.display_string("pump off",1)
 	relay = Relay()
 	relay.switch(3,0)
 	response_mesage={
 		"result":"pump is off"
 	}
 	return JsonResponse(response_mesage)
+    
 
-def latestSensorData(request):
+def savedata(plantId, moistureLevel, pumpStatus):
+        data = (
+          {'Id':plantId, 'MoistureLevel':moistureLevel, 'PumpStatus':pumpStatus, 'RecordedDate':datetime.datetime.now()}
+       )
+
+        connection = None
+        try:
+            connection = sqlite3.connect('/home/pi/django/SmartAgri/mydatabase.db')
+            with connection:
+                cursor = connection.cursor()    
+                cursor.execute("INSERT INTO PlantData VALUES (:Id,:MoistureLevel,:PumpStatus,:RecordedDate)", data)
+        except sqlite3.Error, e:
+            print "Error %s:" % e.args[0]
+            sys.exit(1)
+        finally:
+            if connection:
+                connection.close()
+                
+
+def getLatestMoistureLevel():
     connection = None
-    data = dict()
-    data['title'] = "Plants Irrigation Info"
     try:
-        connection = sqlite3.connect('/home/pi/SmartAgri/mydatabase.db')
+        connection = sqlite3.connect('/home/pi/django/SmartAgri/mydatabase.db')
         with connection:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM PlantData ORDER BY RecordedDate DESC LIMIT 1")
-            data['PlantData'] = cursor.fetchall()
-            jsonResult={
-                "moisturelevel":100
-            }
+            cursor.execute("SELECT MoistureLevel FROM PlantData ORDER BY RecordedDate DESC LIMIT 1")
+            moistureLevel = cursor.fetchone()[0]
     except sqlite3.Error, e:
         print "Error %s:" % e.args[0]
         sys.exit(1)
     finally:
         if connection:
             connection.close()
+    return moistureLevel
 
+
+def latestSensorData(request):
+    moistureLevel = getLatestMoistureLevel()
+    jsonResult={
+                "moisturelevel":moistureLevel
+    }
     return JsonResponse(jsonResult)

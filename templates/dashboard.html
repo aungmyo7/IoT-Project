@@ -25,7 +25,7 @@
 
         <div class="panel panel-primary">
           <div class="panel-heading">
-            <h3 class="panel-title">Pump Info</h3>
+            <h3 class="panel-title">Plant Info</h3>
           </div>
           <div class="panel-body">
               <div class="row">
@@ -35,7 +35,7 @@
                   <div class="col-md-6 center-block">
                       <button id="waterplant" name="waterplant" class="btn btn-primary center-block" style="margin-top:10px;">Water Plant</button>
                       <p class="text-center small" style="margin-top:10px;">
-                          * currently water plant will trigger the relay to show that water pump is started *
+                          * Water pump will automatically turn on if the moisture level falls below 50% and it will turn off once moisture level goes up more than 50%. Click "Water Plant" to manually turn on water pump regardless of moisture level.*
                       </p>
                   </div>
               </div>
@@ -54,13 +54,15 @@
                 <tr>
                     <td>Plant ID</td>
                     <td>Moisture Level</td>
-                    <td>Recorded Datatime</td>
+                    <td>Water Pump Status</td>
+                    <td>Recorded Datetime</td>
                 </tr>
                 {% for t in PlantData %}
                     <tr>
                         <td>{{ t.0 }}</td>
-                        <td>{{ t.1 }}</td>
+                        <td>{{ t.1 }}%</td>
                         <td>{{ t.2 }}</td>
+                        <td>{{ t.3 }}</td>
                     </tr>
                 {% endfor %}
             </table>
@@ -95,6 +97,7 @@
                       url:'/pumpswitchOn',
                       success:function () {
                         console.log("pump on for 5 sec");
+                        location.reload(true);
                       }
                   });
                });
