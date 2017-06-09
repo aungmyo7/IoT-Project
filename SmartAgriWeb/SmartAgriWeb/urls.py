@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^dashboard$', 'SmartAgriWeb.views.dashboard'),
     url(r'^pumpon$', 'SmartAgriWeb.views.pumpswitchOn'),
     url(r'^pumpoff$', 'SmartAgriWeb.views.pumpswitchOff'),
+    url(r'^latestSensorData$','SmartAgriWeb.views.latestSensorData'),
 )
